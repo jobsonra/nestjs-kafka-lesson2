@@ -1,0 +1,22 @@
+NESTJS
+
+backend
+framework nodejs + typescript + ideia incorporada do angular
+criado em 2017
+
+3 camadas: model, view, controller
+
+vantagens:
+COC - convention over configuration
+typescript
+arquitetura escalável
+integração com vários banco de dados
+suporte a micro serviços
+suporte a criação de API Rest, GraphQL
+
+NÃO É
+angular
+react
+vue
+
+

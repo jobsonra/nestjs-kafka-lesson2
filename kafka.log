@@ -1,0 +1,30 @@
+KAFKA
+
+comunicação de dados entre aplicações por meio de streaming
+resiliente à falhas
+aumento de disponibilidade
+uma partição para cada consumer
+partições estão ligadas diretamente a disponibilidade do serrviço
+
+RabittMQ    vs Apache Kafka
+Mensageria  vs Streaming
+Sem storage vs Com storage
+
+
+comunicação síncrona
+
+|--------------------------------|                     |------------------|
+| microserviço nestjs            | <==response http=== | microserviço     |
+| registra a ordem de pagamento  | ===request http===> | faz o pagamento  |
+|--------------------------------|                     |------------------|
+                
+
+comunicação assíncrona (kafka)
+
+|--------------------------------|                          |--------|                          |------------------|
+| microserviço nestjs            | <== publicar mensagem == | broker | == consumir mensagem ==> | microserviço     |
+| registra a ordem de pagamento  | == publicar mensagem ==> | kafka  | <== publicar mensagem == | faz o pagamento  |
+|--------------------------------|                          |--------|                          |------------------|
+                                                                 ||    
+                                                                 ||                                                                 
+                                                              storage     
