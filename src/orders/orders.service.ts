@@ -1,15 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Producer } from 'kafkajs';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order) private order: typeof Order) {}
+  constructor(
+    @InjectModel(Order) private order: typeof Order,
+    @Inject('KAFKA_PRODUCER')
+    private kafkaProducer: Producer,
+  ) { }
 
-  create(createOrderDto: CreateOrderDto) {
-    return this.order.create(createOrderDto);
+  async create(createOrderDto: CreateOrderDto) {
+    const order = await this.order.create(createOrderDto);
+    this.kafkaProducer.send({
+      topic: 'payments',
+      messages: [{ key: 'payments', value: JSON.stringify(order) }]
+    })
+    return order;
   }
 
   findAll() {

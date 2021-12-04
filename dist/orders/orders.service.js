@@ -17,11 +17,17 @@ const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const order_entity_1 = require("./entities/order.entity");
 let OrdersService = class OrdersService {
-    constructor(order) {
+    constructor(order, kafkaProducer) {
         this.order = order;
+        this.kafkaProducer = kafkaProducer;
     }
-    create(createOrderDto) {
-        return this.order.create(createOrderDto);
+    async create(createOrderDto) {
+        const order = await this.order.create(createOrderDto);
+        this.kafkaProducer.send({
+            topic: 'payments',
+            messages: [{ key: 'payments', value: JSON.stringify(order) }]
+        });
+        return order;
     }
     findAll() {
         return this.order.findAll();
@@ -45,7 +51,8 @@ let OrdersService = class OrdersService {
 OrdersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(order_entity_1.Order)),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('KAFKA_PRODUCER')),
+    __metadata("design:paramtypes", [Object, Object])
 ], OrdersService);
 exports.OrdersService = OrdersService;
 //# sourceMappingURL=orders.service.js.map

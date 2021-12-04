@@ -10,7 +10,7 @@ POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
-  "amount": 100.45
+  "amount": 229.10
 }
 
 ###

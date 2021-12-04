@@ -6,13 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  HttpCode,
+  HttpCode
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { KafkaMessage } from '@nestjs/microservices/external/kafka.interface';
+import { KafkaMessage, Producer } from '@nestjs/microservices/external/kafka.interface';
 
 @Controller('orders')
 export class OrdersController {
@@ -45,7 +45,7 @@ export class OrdersController {
   }
 
   @MessagePattern("payments")
-  consumer(@Payload() message: KafkaMessage ) {
+  consumer(@Payload() message: KafkaMessage) {
     console.log(message.value)
   }
 }

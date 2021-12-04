@@ -12,13 +12,39 @@ const orders_service_1 = require("./orders.service");
 const orders_controller_1 = require("./orders.controller");
 const sequelize_1 = require("@nestjs/sequelize");
 const order_entity_1 = require("./entities/order.entity");
+const microservices_1 = require("@nestjs/microservices");
 let OrdersModule = class OrdersModule {
 };
 OrdersModule = __decorate([
     (0, common_1.Module)({
-        imports: [sequelize_1.SequelizeModule.forFeature([order_entity_1.Order])],
+        imports: [
+            sequelize_1.SequelizeModule.forFeature([order_entity_1.Order]),
+            microservices_1.ClientsModule.register([
+                {
+                    name: 'KAFKA_SERVICE',
+                    transport: microservices_1.Transport.KAFKA,
+                    options: {
+                        client: {
+                            brokers: ['localhost:9092'],
+                        },
+                        consumer: {
+                            groupId: 'my-group-consumer'
+                        }
+                    }
+                }
+            ])
+        ],
         controllers: [orders_controller_1.OrdersController],
-        providers: [orders_service_1.OrdersService],
+        providers: [
+            orders_service_1.OrdersService,
+            {
+                provide: 'KAFKA_PRODUCER',
+                useFactory: async (kafkaService) => {
+                    return kafkaService.connect();
+                },
+                inject: ['KAFKA_SERVICE']
+            }
+        ],
     })
 ], OrdersModule);
 exports.OrdersModule = OrdersModule;
